@@ -67,7 +67,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.roshamagin.site`)"
       - "traefik.http.routers.portainer.entrypoints=websecure"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9433"
+      - "traefik.http.services.portainer.loadbalancer.server.port=8000"
       - "traefik.http.routers.portainer.service=portainer"
       - "traefik.http.routers.portainer.tls.certresolver=myresolver"
       # Edge
