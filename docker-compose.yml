@@ -3,8 +3,11 @@ version: '3.2'
 services:
   traefik:
     image: "traefik:latest"
+     environment:
+      CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
       - --entrypoints.web.address=:80
+      - --entrypoints.ping.address=:8082
       - --entrypoints.websecure.address=:443
       - --providers.docker=true
       - --providers.docker.swarmMode=true
@@ -12,6 +15,10 @@ services:
       - --providers.docker.network=public
       - --api
       - --log.level=ERROR
+      - --certificatesresolvers.myresolver.acme.dnschallenge=true
+      - --certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.myresolver.acme.email=info@roshamagin.site
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
     ports:
       - "80:80"
       - "443:443"
@@ -19,6 +26,14 @@ services:
       - public
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - letsencrypt:/letsencrypt
+    healthcheck:
+      test: ["CMD", "wget", "http://localhost:8082/ping","--spider"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
 
   agent:
     image: portainer/agent:latest
@@ -53,12 +68,12 @@ services:
         constraints: [node.role == manager]
       labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.yourdomain.com`)"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.roshamagin.site`)"
       - "traefik.http.routers.portainer.entrypoints=web"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       - "traefik.http.routers.portainer.service=portainer"
       # Edge
-      - "traefik.http.routers.edge.rule=Host(`edge.yourdomain.com`)"
+      - "traefik.http.routers.edge.rule=Host(`edge.roshamagin.site`)"
       - "traefik.http.routers.edge.entrypoints=web"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
@@ -71,4 +86,6 @@ networks:
 
 volumes:
   data:
+    driver: local
+  letsencrypt:
     driver: local
