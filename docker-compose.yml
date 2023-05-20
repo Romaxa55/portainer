@@ -75,7 +75,7 @@ services:
       - "traefik.http.routers.edge.entrypoints=web"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
-      - "traefik.http.routers.portainer.tls.certresolver=myresolver"
+      - "traefik.http.routers.edge.tls.certresolver=myresolver"
 networks:
   public:
     external: true
