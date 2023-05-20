@@ -58,6 +58,8 @@ services:
     networks:
       - public
       - agent_network
+    ports:
+      - 8000:8000
     deploy:
       mode: replicated
       replicas: 1
