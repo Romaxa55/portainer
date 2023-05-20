@@ -64,7 +64,7 @@ services:
       - "traefik.http.routers.edge.service=edge"
 
 networks:
-  default:
+  public:
     external: true
   agent_network:
     external: true
