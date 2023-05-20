@@ -7,7 +7,6 @@ services:
       CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
       - --entrypoints.web.address=:80
-      - --entrypoints.ping.address=:8082
       - --entrypoints.websecure.address=:443
       - --providers.docker=true
       - --providers.docker.swarmMode=true
@@ -27,12 +26,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - letsencrypt:/letsencrypt
-    healthcheck:
-      test: ["CMD", "wget", "http://localhost:8082/ping","--spider"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 5s
 
 
   agent:
