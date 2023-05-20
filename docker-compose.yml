@@ -3,7 +3,7 @@ version: '3.2'
 services:
   traefik:
     image: "traefik:latest"
-     environment:
+    environment:
       CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
       - --entrypoints.web.address=:80
