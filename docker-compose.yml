@@ -62,9 +62,10 @@ services:
       labels:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.roshamagin.site`)"
-      - "traefik.http.routers.portainer.entrypoints=web"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.routers.portainer.tls.certresolver=myresolver"
       # Edge
       - "traefik.http.routers.edge.rule=Host(`edge.roshamagin.site`)"
       - "traefik.http.routers.edge.entrypoints=web"
