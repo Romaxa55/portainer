@@ -26,7 +26,11 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - letsencrypt:/letsencrypt
-
+    labels:
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
   agent:
     image: portainer/agent:latest
@@ -71,7 +75,7 @@ services:
       - "traefik.http.routers.edge.entrypoints=web"
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
-
+      - "traefik.http.routers.portainer.tls.certresolver=myresolver"
 networks:
   public:
     external: true
