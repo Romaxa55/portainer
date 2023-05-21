@@ -4,11 +4,10 @@ services:
   traefik:
     image: "traefik:latest"
     environment:
-      CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
+      CLOUDFLARE_API_KEY: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
-      - --providers.docker=true
+      - --api.insecure=true
       - --providers.docker.swarmMode=true
-      - --providers.docker.endpoint=unix:///var/run/docker.sock
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.myresolver.acme.dnschallenge=true
@@ -24,8 +23,10 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - letsencrypt:/letsencrypt
     labels:
-      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
-      - traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true
+      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-catchall.entrypoints=web"
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
   agent:
     image: portainer/agent:latest
