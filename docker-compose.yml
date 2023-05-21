@@ -10,7 +10,7 @@ services:
       - --log.level=DEBUG
       - --providers.docker=true
       - --providers.docker.network=public
-      - --providers.docker.swarmMode=true
+      - --providers.docker.swarmMode=false
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
