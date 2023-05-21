@@ -6,10 +6,11 @@ services:
     environment:
       CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
+      - --providers.docker=true
+      - --providers.docker.swarmMode=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --providers.docker.exposedbydefault=false
-      - --log.level=DEBUG
       - --certificatesresolvers.myresolver.acme.dnschallenge=true
       - --certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.myresolver.acme.email=info@roshamagin.site
@@ -23,10 +24,8 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - letsencrypt:/letsencrypt
     labels:
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true
 
   agent:
     image: portainer/agent:latest
@@ -60,13 +59,14 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.roshamagin.site`)"
-      - "traefik.http.routers.portainer.entrypoints=websecure"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.http.routers.portainer.service=portainer"
-      - "traefik.http.routers.portainer.tls.certresolver=myresolver"
-
+        - traefik.enable=true
+        - traefik.http.routers.portainer.rule=Host(`portainer.roshamagin.site`)
+        - traefik.http.routers.portainer.entrypoints=web
+        - traefik.http.routers.portainer.middlewares=redirect-to-https
+        - traefik.http.routers.portainer-secured.rule=Host(`portainer.roshamagin.site`)
+        - traefik.http.routers.portainer-secured.entrypoints=websecure
+        - traefik.http.routers.portainer-secured.tls.certresolver=myresolver
+        - traefik.http.services.portainer.loadbalancer.server.port=9000
 networks:
   public:
     external: true
