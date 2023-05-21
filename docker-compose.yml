@@ -7,7 +7,9 @@ services:
       CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
       - --api.insecure=true
+      - --providers.docker=true
       - --providers.docker.swarmMode=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.myresolver.acme.dnschallenge=true
