@@ -4,7 +4,7 @@ services:
   traefik:
     image: "traefik:latest"
     environment:
-      CLOUDFLARE_API_KEY: $CF_API_KEY # use export CF_API_KEY=token clioudflare
+      CF_DNS_API_TOKEN: $CF_API_KEY # use export CF_API_KEY=token clioudflare
     command:
       - --api.insecure=true
       - --providers.docker.swarmMode=true
