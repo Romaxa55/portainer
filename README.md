@@ -1,5 +1,3 @@
-# README.md
-
 ## Portainer and Traefik Setup
 
 Этот репозиторий содержит инструкции по развертыванию Portainer и Traefik с помощью Docker.
